@@ -14,18 +14,37 @@ def get_pinyin_from_url(url):
     return None, None
 
 
-def get_html(city):
+def get_city_html(city):
     url = 'http://{}.meituan.com/category/'.format(city)
     filename = '{}.html'.format(city)
     return tmp_file.get_content_by_url(url, filename)
 
 
+def get_biz_area(city, district):
+    url = 'http://{0}.meituan.com/category/all/{1}'.format(city, district)
+    filename = 'biz_area_{0}_{1}.html'.format(city, district)
+    return tmp_file.get_content_by_url(url, filename)
+
+
 def print_district():
     city = 'wf'
-    html = etree.HTML(get_html(city))
-    xpath_data = html.xpath('//div[@data-component="filter-geo"]/div/ul/li')
-    for li in xpath_data:
-        a = li.findall('.//a')[0]
+    print_result(get_city_html(city))
+
+
+def print_biz_area():
+    city = 'wf'
+    district = 'kuiwenqu'
+    print_result(get_biz_area(city, district))
+
+
+def print_result(content):
+    html = etree.HTML(content)
+    # xpath_data = html.xpath('//div[@data-component="filter-geo"]/div[last()]')
+    xpath_data = html.xpath('//div[@data-component="filter-geo"]/div')
+    print('*' * 20)
+    print(xpath_data)
+    print('\n')
+    for a in xpath_data[-1].findall('.//ul/li/a'):
         url = a.attrib['href']
         city, district = get_pinyin_from_url(url)
         if not district:
@@ -35,4 +54,5 @@ def print_district():
 
 
 if __name__ == '__main__':
-    print_district()
+    # print_district()
+    print_biz_area()
