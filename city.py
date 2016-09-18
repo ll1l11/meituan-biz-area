@@ -2,42 +2,25 @@
 """通过网页版的美团获取城市列表
 将结果保存到cities.json
 """
-import os
-import os.path
 import re
 import json
 import string
-import requests
 from lxml import etree
+import tmp_file
 
 _CITY_URL_PATTERN = re.compile('http://(\w+)\.')
-_TMP_DIR = 'tmp-dir'
-
-
-def check_tmp_dir():
-    if not os.path.exists(_TMP_DIR):
-        os.makedirs(tmp_dir)
 
 
 def get_changecity_html(read_cache=True):
-    # 网页版城市列表
-    check_tmp_dir()
-    path = '{}/changecity.html'.format(_TMP_DIR)
-    if os.path.isfile(path):
-        with open(path) as f:
-            return f.read()
     url = 'http://www.meituan.com/index/changecity/initiative'
-    html = requests.get(url).text
-    with open(path, 'w') as f:
-        f.write(html)
-    return html
+    filename = 'changecity_initiative.html'
+    return tmp_file.get_content_by_url(url, filename, read_cache)
 
 
 def get_pinyin_by_url(url):
     m = _CITY_URL_PATTERN.match(url)
     if m:
         return m.group(1)
-
 
 
 def parse_city(html, letter):
@@ -76,6 +59,7 @@ def main():
             cities=cities
         )
         items.append(item)
+    print(items)
     save(items)
 
 
@@ -85,7 +69,6 @@ def test():
     result = html.xpath('//*[@id="changeCity"]/span[2]')
     print(result)
     print(result[0].attrib['data-params'])
-
 
 
 if __name__ == '__main__':
