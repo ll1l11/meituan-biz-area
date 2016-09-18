@@ -6,8 +6,8 @@ import city
 
 def print_province():
     html = etree.HTML(city.get_changecity_html())
-    change_city_html = html.xpath('//*[@id="changeCity"]/span[2]')
-    data_params = change_city_html[0].attrib['data-params']
+    change_city = html.xpath('//*[@id="changeCity"]/span[2]')
+    data_params = change_city[0].attrib['data-params']
     # print(data_params)
     data = demjson.decode(data_params)['data']
     name_map = data['def']
