@@ -32,19 +32,21 @@ def print_district():
 
 
 def print_biz_area():
-    city = 'wf'
-    district = 'kuiwenqu'
+    city = 'bj'
+    district = 'chaoyangqu'
     print_result(get_biz_area(city, district))
 
 
 def print_result(content):
     html = etree.HTML(content)
     # xpath_data = html.xpath('//div[@data-component="filter-geo"]/div[last()]')
-    xpath_data = html.xpath('//div[@data-component="filter-geo"]/div')
+    # xpath_data = html.xpath('//div[@data-component="filter-geo"]/div')
+    xpath_data = html.xpath('//div[contains(@data-component, "filter-geo")]/div')
     print('*' * 20)
     print(xpath_data)
     print('\n')
-    for a in xpath_data[-1].findall('.//ul/li/a'):
+    for a in xpath_data[-1].xpath('.//ul[contains(@class, "J-")]/li/a'):
+    # for a in xpath_data[-1].findall('.//ul/li/a'):
         url = a.attrib['href']
         city, district = get_pinyin_from_url(url)
         if not district:
